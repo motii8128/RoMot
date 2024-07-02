@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "RoMot"
+name = "motit"
 version = "0.1.0"
