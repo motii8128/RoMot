@@ -1,5 +1,4 @@
 use std::sync::mpsc::{self, Receiver, Sender};
-use crate::motit::log;
 
 pub enum ThreadID {
     START = 1,

@@ -1,29 +1,13 @@
-pub trait Log {
-    fn log_info(str:String)
-    {
-        let log = format!("[{}][INFO]{}", std::any::type_name::<Self>(), str);
+pub fn log_info<T>(str:String)
+{
+    let log = format!("[{}][INFO]{}", std::any::type_name::<T>(), str);
 
-        println!("{}", log);
-    }
-
-    fn log_error(str:String)
-    {
-        let log = format!("[{}][ERROR]{}", std::any::type_name::<Self>(), str);
-
-        println!("{}", log);
-    }
+    println!("{}", log);
 }
 
-impl<T> Log for T {
-    fn log_info(str:String) {
-        let log = format!("[{}][INFO]{}", std::any::type_name::<T>(), str);
+pub fn log_error<T>(str:String)
+{
+    let log = format!("[{}][ERROR]{}", std::any::type_name::<T>(), str);
 
-        println!("{}", log);
-    }
-
-    fn log_error(str:String){
-        let log = format!("[{}][ERROR]{}", std::any::type_name::<T>(), str);
-
-        println!("{}", log);
-    }
+    println!("{}", log);
 }
