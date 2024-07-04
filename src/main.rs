@@ -1,13 +1,16 @@
-use motit::motit::{controller, interface::{self, Packet}, serial, thread_utils::{self, check_task}};
+use motit::motit::thread_utils::{ThreadConnector, check_task};
+use motit::motit::controller::{DualShock4Driver, SERIAL};
+use motit::motit::interface::{Packet, DualShock4};
+use motit::motit::serial::SerialDriver;
 use std::thread;
 
 fn main() {
-    let controller_node = thread_utils::ThreadConnector::<interface::DualShock4>::new(
+    let controller_node = ThreadConnector::<DualShock4>::new(
         "DualShock4Node".to_string());
-    let mut controller_driver = controller::DualShock4Driver::new(controller::SERIAL).unwrap();
-    let serial_node = thread_utils::ThreadConnector::<interface::Packet>::new(
+    let mut controller_driver = DualShock4Driver::new(SERIAL).unwrap();
+    let serial_node = ThreadConnector::<Packet>::new(
         "SerialNode".to_string());
-    let mut serial_driver = serial::SerialDriver::new("/dev/ttyUSB0".to_string(), 115200);
+    let mut serial_driver = SerialDriver::new("/dev/ttyUSB0".to_string(), 115200);
 
     thread::spawn(move || controller_driver.read(controller_node.task_sender, controller_node.publisher));
     check_task(&controller_node.name, controller_node.task_receiver.recv().unwrap());
