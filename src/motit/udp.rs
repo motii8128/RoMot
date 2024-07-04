@@ -1,3 +1,7 @@
 use std::net::UdpSocket;
-use crate::motit::thread;
+use crate::motit::handler;
 
+pub struct UDPHandler
+{
+    
+}
