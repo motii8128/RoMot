@@ -1,51 +1,18 @@
 extern crate hidapi;
-use crate::motit::log;
+use crate::motit::{log, interface::{Buttons, JoyStick, Dpad, DualShock4}, thread::ActionID};
 use hidapi::{HidApi, HidDevice, HidError};
+use std::sync::mpsc::Sender;
 
 pub const BLE:u8 = 50;
 pub const SERIAL:u8 = 100;
-pub struct JoyStick
-{
-    pub left_x:f32,
-    pub left_y:f32,
-    pub right_x:f32,
-    pub right_y:f32,
-}
-
-pub struct Dpad
-{
-    pub up_key:bool,
-    pub down_key:bool,
-    pub left_key:bool,
-    pub right_key:bool,   
-}
-
-pub struct Buttons
-{
-    pub circle:bool,
-    pub cross:bool,
-    pub triangle:bool,
-    pub cube:bool,
-    pub r1:bool,
-    pub r2:bool,
-    pub l1:bool,
-    pub l2:bool,
-    pub left_push:bool,
-    pub right_push:bool
-}
 
 pub struct DualShock4Driver
 {
     device:HidDevice,
     mode:u8,
+    
 }
 
-pub struct DualShock4
-{
-    pub sticks:JoyStick,
-    pub btns:Buttons,
-    pub dpad:Dpad
-}
 
 impl DualShock4Driver {
     pub fn new(mode:u8)->Result<DualShock4Driver, HidError>
@@ -71,21 +38,26 @@ impl DualShock4Driver {
         }
 
     }
-    pub fn read(&mut self)->Result<DualShock4, HidError>
+    pub fn read(&mut self, reporter:Sender<ActionID>, sender:Sender<DualShock4>)
     {
-        let mut buf = [0_u8;256];
-        match self.device.read(&mut buf) {
-            Ok(size)=>{
-                let get_data = &buf[..size];
-                // println!("{:?}", get_data);
+        let _ = reporter.send(ActionID::START);
+        loop
+        {
+            let mut buf = [0_u8;256];
 
-                let (j, btn, d) = convert(get_data, self.mode);
+            match self.device.read(&mut buf) {
+                Ok(size)=>{
+                    let get_data = &buf[..size];
+                    // println!("{:?}", get_data);
 
-                Ok(DualShock4{sticks:j, btns:btn, dpad:d})
-            }
-            Err(e)=>{
-                log::log_error::<DualShock4Driver>("Failed to read DualShock4".to_string());
-                Err(e)
+                    let (j, btn, d) = convert(get_data, self.mode);
+
+                    let _ = reporter.send(ActionID::SUCCESS);
+                    let _ = sender.send(DualShock4 { sticks: j, btns: btn, dpad: d });
+                }
+                Err(_)=>{
+                    let _ = reporter.send(ActionID::ERROR);
+                }
             }
         }
     }
