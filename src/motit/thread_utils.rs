@@ -27,21 +27,21 @@ impl<T> ThreadConnector<T> {
     }
 }
 
-pub fn check_task(name:String, get_ans:u8)
+pub fn check_task(name:&str, get_ans:u8)
     {
         if get_ans == SUCCESS
         {
-            log::log_info(&name, "Task OK");
+            // log::log_info(name, "Task OK");
         }
         else if get_ans == ERROR
         {
-            log::log_error(&name, "Found Error");
+            log::log_error(name, "Found Error");
         }
         else if get_ans == START
         {
-            log::log_info(&name, "Start Task");
+            log::log_info(name, "Start Task");
         }
         else {
-            log::log_info(&name, "End Task");
+            log::log_info(name, "End Task");
         }
     }

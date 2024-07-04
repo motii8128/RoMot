@@ -30,7 +30,7 @@ impl SerialDriver {
         loop {
             let packet = packet_receiver.recv().unwrap();
 
-            let buf = format!("{},{},{},{}", packet.x, packet.y, packet.m1, packet.m2);
+            let buf = format!("s{},{},{},{}e", packet.x, packet.y, packet.m1, packet.m2);
 
             match self.port.write(buf.as_bytes()) {
                 Ok(_)=>{
