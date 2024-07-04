@@ -4,8 +4,3 @@ pub mod controller;
 pub mod log;
 pub mod serial;
 pub mod interface;
-
-pub struct Motit
-{
-    
-}
