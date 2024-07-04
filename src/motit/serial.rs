@@ -1,4 +1,4 @@
-use crate::motit::{thread_utils::ActionID, interface::SerialPacket};
+use crate::motit::{thread_utils, interface::SerialPacket};
 
 use serialport::{self, SerialPort};
 
@@ -24,20 +24,20 @@ impl SerialDriver {
         (self.port_path.as_str(), self.baud_rate)
     }
 
-    pub fn write_task(&mut self, packet_receiver:Receiver<SerialPacket>, reporter:Sender<ActionID>)
+    pub fn write_task(&mut self, packet_receiver:Receiver<SerialPacket>, reporter:Sender<u8>)
     {
-        let _ = reporter.send(ActionID::START);
+        let _ = reporter.send(thread_utils::START);
         loop {
             let packet = packet_receiver.recv().unwrap();
 
-            let buf = format!("s{},{},{},{}e", packet.x, packet.y, packet.m1, packet.m2);
+            let buf = format!("{},{},{},{}", packet.x, packet.y, packet.m1, packet.m2);
 
             match self.port.write(buf.as_bytes()) {
                 Ok(_)=>{
-                    let _ = reporter.send(ActionID::SUCCESS);
+                    let _ = reporter.send(thread_utils::SUCCESS);
                 }
                 Err(_)=>{
-                    let _ = reporter.send(ActionID::ERROR);
+                    let _ = reporter.send(thread_utils::ERROR);
                 }
             }
         }

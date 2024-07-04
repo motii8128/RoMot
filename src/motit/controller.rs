@@ -1,5 +1,5 @@
 extern crate hidapi;
-use crate::motit::{log, interface::{Buttons, JoyStick, Dpad, DualShock4}, thread_utils::ActionID};
+use crate::motit::{interface::{Buttons, JoyStick, Dpad, DualShock4}, thread_utils};
 use hidapi::{HidApi, HidDevice, HidError};
 use std::sync::mpsc::Sender;
 
@@ -27,20 +27,17 @@ impl DualShock4Driver {
                     device:dev,
                     mode:mode
                 };
-
-                log::log_info::<DualShock4Driver>("Open DualShock4".to_string());
                 Ok(ds)
             }
             Err(e)=>{
-                log::log_error::<DualShock4Driver>("Failed to open DualShock4".to_string());
                 Err(e)
             }
         }
 
     }
-    pub fn read(&mut self, reporter:Sender<ActionID>, sender:Sender<DualShock4>)
+    pub fn read(&mut self, reporter:Sender<u8>, sender:Sender<DualShock4>)
     {
-        let _ = reporter.send(ActionID::START);
+        let _ = reporter.send(thread_utils::START);
         loop
         {
             let mut buf = [0_u8;256];
@@ -52,11 +49,11 @@ impl DualShock4Driver {
 
                     let (j, btn, d) = convert(get_data, self.mode);
 
-                    let _ = reporter.send(ActionID::SUCCESS);
+                    let _ = reporter.send(thread_utils::SUCCESS);
                     let _ = sender.send(DualShock4 { sticks: j, btns: btn, dpad: d });
                 }
                 Err(_)=>{
-                    let _ = reporter.send(ActionID::ERROR);
+                    let _ = reporter.send(thread_utils::ERROR);
                 }
             }
         }
@@ -180,7 +177,6 @@ fn convert(buf:&[u8], mode:u8)->(JoyStick, Buttons, Dpad)
         (joy, btns, dpad)
     }
     else {
-        log::log_error::<DualShock4Driver>("Failed to set mode".to_string());
 
         let joy = JoyStick{left_x:0.0, left_y:0.0, right_x:0.0, right_y:0.0};
         let btns = Buttons{
