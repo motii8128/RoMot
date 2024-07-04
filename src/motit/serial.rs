@@ -1,23 +1,23 @@
-use crate::motit::{thread::ActionID, interface::SerialPacket};
+use crate::motit::{thread_utils::ActionID, interface::SerialPacket};
 
 use serialport::{self, SerialPort};
 
 use std::time::Duration;
 use std::sync::mpsc::{Receiver, Sender};
 
-pub struct SerialHandler
+pub struct SerialDriver
 {
     pub port_path:String,
     pub baud_rate:u32,
     pub port:Box<dyn SerialPort>,
 }
 
-impl SerialHandler {
-    pub fn new(path:String, baudrate:u32)->SerialHandler
+impl SerialDriver {
+    pub fn new(path:String, baudrate:u32)->SerialDriver
     {
         let por = serialport::new(path.as_str(), baudrate).timeout(Duration::from_millis(100)).open().unwrap();
 
-        SerialHandler{port_path:path, baud_rate:baudrate, port:por}
+        SerialDriver{port_path:path, baud_rate:baudrate, port:por}
     }
     pub fn get_serial_info(&self)->(&str, u32)
     {

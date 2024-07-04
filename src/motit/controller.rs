@@ -1,5 +1,5 @@
 extern crate hidapi;
-use crate::motit::{log, interface::{Buttons, JoyStick, Dpad, DualShock4}, thread::ActionID};
+use crate::motit::{log, interface::{Buttons, JoyStick, Dpad, DualShock4}, thread_utils::ActionID};
 use hidapi::{HidApi, HidDevice, HidError};
 use std::sync::mpsc::Sender;
 
