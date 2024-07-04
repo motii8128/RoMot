@@ -1,11 +1,11 @@
-use motit::motit::{controller, interface::{self, SerialPacket}, serial, thread_utils::{self, check_task}};
+use motit::motit::{controller, interface::{self, Packet}, serial, thread_utils::{self, check_task}};
 use std::thread;
 
 fn main() {
     let controller_node = thread_utils::ThreadConnector::<interface::DualShock4>::new(
         "DualShock4Node".to_string());
     let mut controller_driver = controller::DualShock4Driver::new(controller::SERIAL).unwrap();
-    let serial_node = thread_utils::ThreadConnector::<interface::SerialPacket>::new(
+    let serial_node = thread_utils::ThreadConnector::<interface::Packet>::new(
         "SerialNode".to_string());
     let mut serial_driver = serial::SerialDriver::new("/dev/ttyUSB0".to_string(), 115200);
 
@@ -47,7 +47,7 @@ fn main() {
             100
         };
 
-        let packet = SerialPacket{
+        let packet = Packet{
             x:x_value,
             y:y_value,
             m1:m1_value,

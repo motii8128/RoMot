@@ -1,4 +1,4 @@
-use crate::motit::{thread_utils, interface::SerialPacket};
+use crate::motit::{thread_utils, interface::Packet};
 
 use serialport::{self, SerialPort};
 
@@ -24,7 +24,7 @@ impl SerialDriver {
         (self.port_path.as_str(), self.baud_rate)
     }
 
-    pub fn write_task(&mut self, packet_receiver:Receiver<SerialPacket>, reporter:Sender<u8>)
+    pub fn write_task(&mut self, packet_receiver:Receiver<Packet>, reporter:Sender<u8>)
     {
         let _ = reporter.send(thread_utils::START);
         loop {

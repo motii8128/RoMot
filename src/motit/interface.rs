@@ -1,4 +1,4 @@
-pub struct SerialPacket
+pub struct Packet
 {
     pub x:i32,
     pub y:i32,
