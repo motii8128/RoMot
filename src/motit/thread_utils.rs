@@ -31,11 +31,11 @@ pub fn check_task(name:&str, get_ans:u8)
     {
         if get_ans == SUCCESS
         {
-            // log::log_info(name, "Task OK");
+            // log::log_info(name, "Check Task OK");
         }
         else if get_ans == ERROR
         {
-            log::log_error(name, "Found Error");
+            log::log_error(name, "Check Task Error");
         }
         else if get_ans == START
         {

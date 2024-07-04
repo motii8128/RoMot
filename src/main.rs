@@ -18,6 +18,8 @@ fn main() {
     thread::spawn(move || serial_driver.write_task(serial_node.subscriber, serial_node.task_sender));
     check_task(&serial_node.name, serial_node.task_receiver.recv().unwrap());
 
+    thread::sleep(std::time::Duration::from_millis(1000));
+
     loop {
         check_task(&controller_node.name, controller_node.task_receiver.recv().unwrap());
         let controller_input = controller_node.subscriber.recv().unwrap();
