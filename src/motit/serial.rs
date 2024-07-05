@@ -26,7 +26,7 @@ impl SerialDriver {
         (self.port_path.as_str(), self.baud_rate)
     }
 
-    pub fn write_task(&mut self)
+    pub fn task(&mut self)
     {
         let _ = self.task_checker.send(thread_utils::START);
 

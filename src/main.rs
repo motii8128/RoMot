@@ -14,10 +14,10 @@ fn main() {
     let mut serial_driver = SerialDriver::new(
         "/dev/ttyACM0".to_string(), 57600,serial_node.subscriber, serial_node.task_sender);
 
-    thread::spawn(move || controller_driver.read());
+    thread::spawn(move || controller_driver.task());
     check_task(&controller_node.name, controller_node.task_receiver.recv().unwrap());
 
-    thread::spawn(move || serial_driver.write_task());
+    thread::spawn(move || serial_driver.task());
     check_task(&serial_node.name, serial_node.task_receiver.recv().unwrap());
 
     thread::sleep(std::time::Duration::from_millis(1000));

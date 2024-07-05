@@ -17,7 +17,7 @@ impl UDPDriver {
         UDPDriver { address: address_, dest:destination, socket: sock }
     }
 
-    pub fn send_task(&mut self, packet_receiver:Receiver<Packet>, reporter:Sender<u8>)
+    pub fn task(&mut self, packet_receiver:Receiver<Packet>, reporter:Sender<u8>)
     {
         let _ = reporter.send(thread_utils::START);
         loop {
@@ -37,8 +37,9 @@ impl UDPDriver {
     }
 }
 
-pub struct MCUDriver
+pub struct MCUSearcher
 {
     pub dest:String,
-    pub socket:UdpSocket
+    pub socket:UdpSocket,
+
 }

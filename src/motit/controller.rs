@@ -38,7 +38,7 @@ impl DualShock4Driver {
         }
 
     }
-    pub fn read(&mut self)
+    pub fn task(&mut self)
     {
         let _ = self.task_checker.send(thread_utils::START);
         loop
