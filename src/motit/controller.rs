@@ -10,12 +10,13 @@ pub struct DualShock4Driver
 {
     device:HidDevice,
     mode:u8,
-    
+    pub publisher:Sender<DualShock4>,
+    pub task_checker:Sender<u8>
 }
 
 
 impl DualShock4Driver {
-    pub fn new(mode:u8)->Result<DualShock4Driver, HidError>
+    pub fn new(mode:u8, controller_publisher:Sender<DualShock4>, task_sender:Sender<u8>)->Result<DualShock4Driver, HidError>
     {
         let api = HidApi::new().unwrap();
 
@@ -25,7 +26,9 @@ impl DualShock4Driver {
                 let ds = DualShock4Driver
                 {
                     device:dev,
-                    mode:mode
+                    mode:mode,
+                    publisher:controller_publisher,
+                    task_checker:task_sender
                 };
                 Ok(ds)
             }
@@ -35,9 +38,9 @@ impl DualShock4Driver {
         }
 
     }
-    pub fn read(&mut self, reporter:Sender<u8>, sender:Sender<DualShock4>)
+    pub fn read(&mut self)
     {
-        let _ = reporter.send(thread_utils::START);
+        let _ = self.task_checker.send(thread_utils::START);
         loop
         {
             let mut buf = [0_u8;256];
@@ -49,11 +52,11 @@ impl DualShock4Driver {
 
                     let (j, btn, d) = convert(get_data, self.mode);
 
-                    let _ = reporter.send(thread_utils::SUCCESS);
-                    let _ = sender.send(DualShock4 { sticks: j, btns: btn, dpad: d });
+                    let _ = self.task_checker.send(thread_utils::SUCCESS);
+                    let _ = self.publisher.send(DualShock4 { sticks: j, btns: btn, dpad: d });
                 }
                 Err(_)=>{
-                    let _ = reporter.send(thread_utils::ERROR);
+                    let _ = self.task_checker.send(thread_utils::ERROR);
                 }
             }
         }

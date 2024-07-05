@@ -36,3 +36,15 @@ impl UDPDriver {
         }
     }
 }
+
+pub struct MCUDevice
+{
+    pub address_port:String,
+    pub device_name:String
+}
+
+pub struct MCUDriver
+{
+    pub dest:String,
+    pub socket:UdpSocket
+}
