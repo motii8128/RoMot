@@ -42,3 +42,14 @@ pub struct DualShock4
     pub btns:Buttons,
     pub dpad:Dpad
 }
+
+pub struct MCUDevice
+{
+    pub address_port:String,
+    pub device_name:String
+}
+
+pub struct MCUDeviceList
+{
+    pub devices:Vec<MCUDevice>
+}
