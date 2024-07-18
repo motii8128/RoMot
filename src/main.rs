@@ -12,7 +12,7 @@ fn main() {
     let serial_node = ThreadConnector::<Packet>::new(
         "SerialNode".to_string());
     let mut serial_driver = SerialDriver::new(
-        "/dev/ttyACM0".to_string(), 57600,serial_node.subscriber, serial_node.task_sender);
+        "/dev/ttyACM0".to_string(), 115200,serial_node.subscriber, serial_node.task_sender);
 
     thread::spawn(move || controller_driver.task());
     check_task(&controller_node.name, controller_node.task_receiver.recv().unwrap());
@@ -29,6 +29,7 @@ fn main() {
 
         let x_value = (controller_input.sticks.left_x*10.0) as i32+10;
         let y_value = (controller_input.sticks.left_y*10.0) as i32+10;
+        let ro_v = (controller_input.sticks.right_x*10.0) as i32+ 10;
 
         let m1_value = if controller_input.dpad.up_key{
             20
@@ -57,6 +58,7 @@ fn main() {
         let packet = Packet{
             x:x_value,
             y:y_value,
+            ro:ro_v,
             m1:m1_value,
             m2:m2_value
         };

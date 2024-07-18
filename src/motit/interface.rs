@@ -2,6 +2,7 @@ pub struct Packet
 {
     pub x:i32,
     pub y:i32,
+    pub ro:i32,
     pub m1:i32,
     pub m2:i32,
 }
